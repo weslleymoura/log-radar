@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+    Route Analysis - {{ block.super }}
+{% endblock title %}
+
+
+{% block body %}
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+          <br>
+          <ol>
+            <li><a href="{% url 'core:home' %}">Home</a></li>
+            <li>Route Analysis</li>
+          </ol>
+        </div>
+      </section><!-- End Breadcrumbs -->
+
+    <div class="container">
+        <br>
+        <h2>Route Analysis</h2>
+        <br>
+
+        {% include 'partials/messages.html' %}
+    
+        <div class="container">
+
+          <div class="row">
+            <div class="col-md-12">
+                <form action=".", method="GET">
+                    {% csrf_token %}
+
+                    <div class="card-deck">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Origin</h5>
+                          <p class="card-text">Type the origin of the route
+                          </p>
+                          <input type="text" id="origin" name="origin" class="form-control" value="{{ origin }}">
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Destination</h5>
+                          <p class="card-text">Type the destination of the route
+                          </p>
+                          <input type="text" id="destination" name="destination" class="form-control" value="{{ destination }}">
+            
+                        </div>
+                      </div>        
+                    </div>
+
+                    <br>
+                    <div class="card-deck">
+                      <div class="card">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                      </div>
+                    </div>
+                </form>
+            </div>
+          </div>
+
+          <br>
+
+          {% if chart %}
+
+          </div>
+        
+          <br>
+          <div class="container" id="chartDiv">
+            <center>
+                <a class="btn btn-info" href="{% url 'core:list_data_points' origin destination 'regular' %}">
+                  Regular services <span class="badge badge-light">{{ n_regular }}</span>
+                </a>
+            
+                <a class="btn btn-danger" href="{% url 'core:list_data_points' origin destination 'flagged' %}">
+                  Delayed services <span class="badge badge-light">{{ n_risk }}</span>
+                </a>
+
+                <img src="data:image/png;base64, {{ chart|safe }}">
+
+                <br>
+
+                <img src="data:image/png;base64, {{ chart_cluster|safe }}">
+
+            </center>
+          </div>
+
+          <br>
+          <div class="container">
+            <center>
+                <a href="{% url 'core:add_data_point' origin destination %}" class="btn btn-primary btn-sm">Create data point</a>
+                <a href="{% url 'core:list_data_points' origin destination 'train' %}" class="btn btn-primary btn-sm">Check training set</a>
+            </center>
+          </div>
+
+          <!--<div id="divID"></div>-->
+
+        {% endif %}
+
+    </div>
+    
+{% endblock body %}
+
+{% block js %}
+
+  <script>
+    var counter = 1;
+    var auto_refresh = setInterval(
+    function () {
+        var newcontent= 'Refresh nr:'+counter;
+        $('#divID').html(newcontent);
+        $("#chartDiv").load(location.href + " #chartDiv>*", "");
+        counter++;
+    }, 1000);
+  </script>
+
+    <!--
+    <script>
+        $(document).ready(function () {
+
+            setInterval( function() {
+              $("#chartDiv").load(location.href + " #chartDiv>*", "");
+             }, 1000 );
+
+        });
+    </script>
+
+    $("#chartDiv").html('<img src="data:image/png;base64, {{ chart|safe }}">');
+    -->
+    
+{% endblock js %}

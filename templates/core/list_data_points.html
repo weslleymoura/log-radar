@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+    Data points - {{ block.super }}
+{% endblock title %}
+
+
+{% block body %}
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+          <br>
+          <ol>
+            <li><a href="{% url 'core:home' %}">Home</a></li>
+            <li>Route analysis</li>
+            <li>List data points</li>
+          </ol>
+        </div>
+      </section><!-- End Breadcrumbs -->
+
+    <div class="container">
+
+          <br>
+          <h2>List of data points</h2>
+          <br>
+
+          <a class="btn btn-primary" href="{% url 'core:route' origin destination %}"><== Back</a>
+
+          <br><br>
+       
+
+        {% if not data_points %}
+            <center>
+                <img src="{% static 'img/empty.png' %}" class="img-fluid">
+            </center> 
+        {% endif %}
+
+        {% include 'partials/messages.html' %}
+        
+        {% if data_points %}
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="table-responsive">
+
+                <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">Origin</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Dimension 1</th>
+                        <th scope="col">Dimension 2</th>
+                        <th scope="col">Business key</th>
+                        <th scope="col">Is active?</th>
+                        <th scope="col">Is train?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for data_point in data_points %}
+                            <tr>
+                                
+                                <td>{{ data_point.origin }}</td>
+                                <td>{{ data_point.destination }}</td>
+                                <td>{{ data_point.dim_1 }}</td>
+                                <td>{{ data_point.dim_2 }}</td>
+
+                                {% if data_point.business_key %}
+                                    <td>{{ data_point.business_key }}</td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+
+                                
+
+                                {% if data_point.is_active %}
+                                    <td>Yes</td>
+                                {% else %}
+                                    <td>No</td>
+                                {% endif %}
+
+                                {% if data_point.is_train %}
+                                    <td>Yes</td>
+                                {% else %}
+                                    <td>No</td>
+                                {% endif %}
+
+                          </tr>      
+                        {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </div>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+            {% if data_points.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ data_points.previous_page_number }}">Previous</a></li>
+            {% endif %}
+        
+            <span class="current">
+                &nbsp;&nbsp; Página {{ data_points.number }} de {{ data_points.paginator.num_pages }} &nbsp;&nbsp;
+            </span>
+        
+            {% if data_points.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ data_points.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ data_points.paginator.num_pages }}">Last</a></li>
+            {% endif %}
+        
+            </ul>
+        </nav>
+
+        {% endif %}
+
+    </div>
+{% endblock body %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+    {{ block.super }}
+{% endblock title %}
+
+{% block body %}
+
+<br><br>
+
+<!-- ======= Services Section ======= -->
+<section id="services" class="services section-bg">
+  <div class="container" data-aos="fade-up">
+
+    {% include 'partials/messages.html' %}
+
+    <div class="section-title">
+      <h2>How does it work?</h2>
+      <p>Online tracking of urban logistics operations</p>
+    </div>
+
+    <center>
+      Assuming we are running a logistic company, which is responsible to deliver parcels from a given origin location to a destination. The system will work as follow:
+    </center>
+
+    <br><br>
+
+    <div class="row">
+      <div class="col-xl-3 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="icon-box">
+          <div class="icon"><i class='bx bx-radar'></i></div>
+          <h4><a href="">Mapping business patterns</a></h4>
+          <p>We use density-based contours (Gaussian kernel) to map business patterns. We assume these patterns are the expected behavior of the company operation</p>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
+        <div class="icon-box">
+          <div class="icon"><i class='bx bx-play-circle'></i></div>    
+          <h4><a href="">Online tracking of the operation</a></h4>
+          <p>
+            We then track the movement of the parcels across the network
+          </p>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-xl-0" data-aos="zoom-in" data-aos-delay="300">
+        <div class="icon-box">
+          <div class="icon"><i class='bx bxs-filter-alt'></i></div>
+          <h4><a href="">Flagging business anomalies</a></h4>
+          <p>Parcels which does not match the business patterns are selected for further scrutiny</p>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6 d-flex align-items-stretch mt-4 mt-xl-0" data-aos="zoom-in" data-aos-delay="300">
+        <div class="icon-box">
+          <div class="icon"><i class='bx bx-move'></i></div>
+          <h4><a href="">Tracking the drift of business</a></h4>
+          <p>The system constantly observe the data distribution by the usage of online clustering models. Whenever is needed, contours (business patterns) are updated</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section><!-- End Services Section -->
+
+<br>
+<div class="container">
+  <a href="{% url 'core:route' %}" type="button" class="btn btn-primary btn-lg btn-block">Try it now</a>
+</div>
+
+{% endblock body %}
+
+{% block js %}
+
+
+
+{% endblock js %}

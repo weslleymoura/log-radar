@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+      <!-- Google Fonts -->
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+      <!-- Vendor CSS Files -->
+      <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/venobox/venobox.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+      <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+
+      <!-- Template Main CSS File -->
+      <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+      <!-- Icons -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+      <!-- Select2 -->
+      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>
+      {% block title %}
+          Log Radar
+      {% endblock title %}
+      </title>
+
+      <!-- =======================================================
+      * Template Name: Arsha - v2.3.1
+      * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+      * Author: BootstrapMade.com
+      * License: https://bootstrapmade.com/license/
+      ======================================================== -->
+
+  </head>
+
+  <body>
+    
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top header-inner-pages">
+      <div class="container d-flex align-items-center">
+        <h1 class="logo mr-auto"><a href="{% url 'core:home' %}">Log Radar</a></h1>
+        <nav class="nav-menu d-none d-lg-block">
+          <ul>
+              <li><a href="{% url 'core:reset_data_points' %}">Reconfigure environment</a></li>
+          </ul>
+        </nav><!-- .nav-menu -->
+      </div>
+    </header><!-- End Header -->
+    
+    <main id="main">
+
+    {% block body %}
+
+
+        
+    {% endblock body %}
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <br>
+    <footer id="footer">
+
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+
+            <div class="col-lg-3 col-md-6 footer-contact">
+              <h3>Log Radar</h3>
+              <p>
+                Minho University<br>
+                Portugal <br><br>
+                <strong>Email:</strong> weslleymoura@gmail.com<br>
+              </p>
+            </div>
+
+            <div class="col-lg-3 col-md-6 footer-links">
+              <h4>Links</h4>
+              <ul>
+                <li><i class="bx bx-chevron-right"></i> <a href="{% url 'core:home' %}">Home</a></li>
+              </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 footer-links">
+              <h4>Terms and services</h4>
+              <ul>
+                <li><i class="bx bx-chevron-right"></i> <a href="#">License</a></li>
+              </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 footer-links">
+              <h4>Follow me!</h4>
+              <div class="social-links mt-3">
+                <a href="https://www.linkedin.com/in/weslleymoura/" class="linkedin" target="_blank"><i class="bx bxl-linkedin"></i></a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="container footer-bottom clearfix">
+        <div class="copyright">
+          Log Radar
+        </div>
+      <!--  <div class="credits">-->
+          <!-- All the links in the footer should remain intact. -->
+          <!-- You can delete the links only if you purchased the pro version. -->
+          <!-- Licensing information: https://bootstrapmade.com/license/ -->
+          <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
+       <!--   Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>-->
+       <!-- </div>-->
+      </div>
+    
+
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top"><i class="ri-arrow-up-line"></i></a>
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/jquery/jquery.min.js' %}"></script>
+    
+    <script src="{% static 'assets/vendor/jquery.easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+    <script src="{% static 'assets/vendor/waypoints/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/venobox/venobox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/owl.carousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+    <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="{% static 'js/jquery.mask.min.js' %}"></script>
+    <script src="{% static 'js/mask.js' %}"></script>
+
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    
+    {% block js %}
+            
+    {% endblock js %}
+
+  </body> 
+</html>
