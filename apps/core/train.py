@@ -18,14 +18,34 @@ def plot_clusters (clusterer):
     cluster_center = np.array(cluster_center)
     cluster_radius = np.array(cluster_radius)
 
+    # Selecting clustering center and radius (outlier clusters)
+    o_cluster_center = []
+    o_cluster_radius = []
+    for cluster in clusterer.o_micro_clusters:
+        o_cluster_center.append(cluster.center())
+        o_cluster_radius.append(cluster.radius())
+
+    o_cluster_center = np.array(o_cluster_center)
+    o_cluster_radius = np.array(o_cluster_radius)
+
     # visualize
     fig, ax = plt.subplots(figsize=(10,5))
     #plt.switch_backend('AGG')
     #plt.plot(df_train.x, df_train.y, ".b", markersize=6)
-    plt.plot(cluster_center[:, 0], cluster_center[:, 1], ".r", markersize=15)
+    plt.plot(cluster_center[:, 0], cluster_center[:, 1], ".b", markersize=15)
+
+    if len(o_cluster_center) > 0:
+        plt.plot(o_cluster_center[:, 0], o_cluster_center[:, 1], ".r", markersize=15)
+
     for idx in range(len(cluster_center)):
-        circle = plt.Circle((cluster_center[idx, 0], cluster_center[idx, 1]), cluster_radius[idx], color='r', fill=False, lw=2)
+        circle = plt.Circle((cluster_center[idx, 0], cluster_center[idx, 1]), cluster_radius[idx], color='b', fill=False, lw=2)
         ax.add_artist(circle)
+
+    if len(o_cluster_center) > 0:
+        for idx in range(len(o_cluster_center)):
+            circle = plt.Circle((o_cluster_center[idx, 0], o_cluster_center[idx, 1]), o_cluster_radius[idx], color='r', fill=False, lw=2)
+            ax.add_artist(circle)
+
     plt.tight_layout()
     graph = get_graph()
 

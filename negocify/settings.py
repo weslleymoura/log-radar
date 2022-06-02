@@ -32,7 +32,7 @@ SECRET_KEY = config('SECRET_KEY', default='my-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'log-radar.herokuapp.com']
 
 
 # Application definition
@@ -151,19 +151,17 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 
-NEGOCIFY_ENV = config('NEGOCIFY_ENV', default='TEST')
-
-
 #---------------------------------------------------------------------------------
 # AWS
 #---------------------------------------------------------------------------------
 
 #https://blog.theodo.com/2019/07/aws-s3-upload-django/
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID_WM')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY_WM')
+AWS_STORAGE_BUCKET_NAME = 'log-radar-bucket'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_S3_REGION_NAME = 'sa-east-1'
+AWS_S3_REGION_NAME = 'sa-east-1' 
+
 
 django_heroku.settings(locals())
 

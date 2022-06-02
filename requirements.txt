@@ -1,3 +1,4 @@
+pandas==1.1.5
 asgiref==3.3.1
 boto3==1.17.13
 botocore==1.20.13
@@ -23,19 +24,14 @@ s3transfer==0.3.4
 setuptools==52.0.0
 six==1.15.0
 sqlparse==0.4.1
-stripe==2.55.2
 urllib3==1.26.3
 wheel==0.36.2
 whitenoise==5.2.0
 sendgrid==6.6.0
-numpy==1.19.5
 schedule==1.1.0
 django-utils-six==2.0.0
-django-telegram-login==0.2.3
-python-telegram-bot==13.8.1
-telegram-send==0.25
 django-select2==7.9.0
-pandas==1.1.5
 matplotlib==3.3.4
-scipy==1.5.4
 scikit-learn==0.24.2
+scipy==1.5.4
+numpy==1.19.5

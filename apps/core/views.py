@@ -15,6 +15,7 @@ import pickle
 import os
 from django.views.decorators.csrf import csrf_exempt
 import requests
+import json
 
 def home (request):
 
@@ -106,9 +107,15 @@ def route (request, origin = None, destination = None):
         filename = 'artefacts/cluster_{}_{}'.format(origin, destination)
         pickle.dump(clusterer, open(filename, 'wb'))
 
+        # dump micro cluster weights
+        new_micro_cluster_weights = [c.sum_of_weights for c in clusterer.p_micro_clusters]
+        new_micro_cluster_weights_perc = [i/sum(new_micro_cluster_weights) for i in new_micro_cluster_weights]
+        filename = 'artefacts/micro_cluster_weights_{}_{}.npy'.format(origin, destination)
+        np.save(filename, new_micro_cluster_weights_perc, allow_pickle=True)
+
         # Message
         messages.success(request, 'Contours ware successfully created.')
-
+    
     # Fetch current datapoints (just to show non-training points)
     data =  DataPoint.objects.filter(origin = origin, destination = destination, is_active = True, is_train = False)
     x = np.array([float(d.dim_1) for d in data])
@@ -149,6 +156,89 @@ def route (request, origin = None, destination = None):
     # Return
     return render (request, template_name, context)
 
+def update_system_after_new_data_point (origin, destination, dim_1, dim_2):
+
+    # Prepare returning message
+    msg = ''
+
+    # load cluster model
+    filename = 'artefacts/cluster_{}_{}'.format(origin, destination)
+    clusterer = pickle.load(open(filename, 'rb'))
+
+    # load micro cluster weights
+    filename = 'artefacts/micro_cluster_weights_{}_{}.npy'.format(origin, destination)
+    current_micro_cluster_weights_perc = np.load(filename, allow_pickle=True)
+
+    # Perform the partial fit
+    clusterer.partial_fit([[dim_1, dim_2]], 1)
+
+    # Check the new state
+    new_current_p_micro_clusters = len(clusterer.p_micro_clusters)
+    new_current_o_micro_clusters = len(clusterer.o_micro_clusters)
+
+    # Check micro cluster weights
+    new_micro_cluster_weights = [c.sum_of_weights for c in clusterer.p_micro_clusters]
+    new_micro_cluster_weights_perc = [i/sum(new_micro_cluster_weights) for i in new_micro_cluster_weights]
+
+    print(current_micro_cluster_weights_perc)
+    print(new_micro_cluster_weights_perc)
+
+    # Check if the data has changed 
+    has_changed = False
+    for i in range(0, len(current_micro_cluster_weights_perc)):
+        diff = abs(current_micro_cluster_weights_perc[i] - new_micro_cluster_weights_perc[i])
+        if diff >= 0.001:
+            has_changed = True
+            break
+
+    print('Mudou?')
+    print(has_changed)
+
+    if has_changed:
+    
+        # Select data
+        data =  DataPoint.objects.filter(origin = origin, destination = destination, is_active = True)
+
+        # Convert Queryset to Dataframe
+        d = data.values()
+        df_data = pd.DataFrame.from_records(d)
+
+        # Recreate clusters
+        clusterer, y = create_cluster_model(df_data)
+        
+        # Recreate contours
+        xx, yy, f = set_contours (data)
+
+        # dump xx
+        filename = 'artefacts/xx_{}_{}'.format(origin, destination)
+        np.save(filename, xx, allow_pickle=True)
+
+        # dump yy
+        filename = 'artefacts/yy_{}_{}'.format(origin, destination)
+        np.save(filename, yy, allow_pickle=True)
+
+        # dump f
+        filename = 'artefacts/f_{}_{}'.format(origin, destination)
+        np.save(filename, f, allow_pickle=True)
+
+        # dump micro cluster weights
+        new_micro_cluster_weights = [c.sum_of_weights for c in clusterer.p_micro_clusters]
+        new_micro_cluster_weights_perc = [i/sum(new_micro_cluster_weights) for i in new_micro_cluster_weights]
+        filename = 'artefacts/micro_cluster_weights_{}_{}.npy'.format(origin, destination)
+        np.save(filename, new_micro_cluster_weights_perc, allow_pickle=True)
+
+        filename = 'artefacts/micro_cluster_weights_{}_{}.npy'.format(origin, destination)
+
+        # Logging
+        msg = 'The cluster model and contours have been retrained with the new data'
+
+    # dump cluster model
+    filename = 'artefacts/cluster_{}_{}'.format(origin, destination)
+    pickle.dump(clusterer, open(filename, 'wb'))
+
+    # Return
+    return msg
+
 def add_data_point (request, origin = None, destination = None):
 
     template_name = 'core/add_data_point.html'
@@ -169,55 +259,9 @@ def add_data_point (request, origin = None, destination = None):
             form.save()
             messages.success(request, 'The new data point was successfully created.')
 
-            # load cluster model
-            filename = 'artefacts/cluster_{}_{}'.format(origin, destination)
-            clusterer = pickle.load(open(filename, 'rb'))
-
-            # Check the current state of the cluster
-            current_p_micro_clusters = len(clusterer.p_micro_clusters)
-            current_o_micro_clusters = len(clusterer.o_micro_clusters)
-
-            # Perform the partial fit
-            clusterer.partial_fit([[dim_1, dim_2]], 1)
-
-            # Check the new state
-            new_current_p_micro_clusters = len(clusterer.p_micro_clusters)
-            new_current_o_micro_clusters = len(clusterer.o_micro_clusters)
-
-            # Check if the data has changed enough
-            if current_p_micro_clusters != new_current_p_micro_clusters:
-            
-                # Select data
-                data =  DataPoint.objects.filter(origin = origin, destination = destination, is_active = True)
-
-                # Convert Queryset to Dataframe
-                d = data.values()
-                df_data = pd.DataFrame.from_records(d)
-
-                # Recreate clusters
-                clusterer, y = create_cluster_model(df_data)
-                
-                # Recreate contours
-                xx, yy, f = set_contours (data)
-
-                # dump xx
-                filename = 'artefacts/xx_{}_{}'.format(origin, destination)
-                np.save(filename, xx, allow_pickle=True)
-
-                # dump yy
-                filename = 'artefacts/yy_{}_{}'.format(origin, destination)
-                np.save(filename, yy, allow_pickle=True)
-
-                # dump f
-                filename = 'artefacts/f_{}_{}'.format(origin, destination)
-                np.save(filename, f, allow_pickle=True)
-
-                # Logging
-                messages.success(request, 'The cluster model and contours have been retrained with the new data')
-
-            # dump cluster model
-            filename = 'artefacts/cluster_{}_{}'.format(origin, destination)
-            pickle.dump(clusterer, open(filename, 'wb'))
+            msg = update_system_after_new_data_point (origin, destination, dim_1, dim_2)
+            if msg != '':
+                messages.success(request, msg)
 
             return redirect('core:route', origin, destination)
 
@@ -332,19 +376,45 @@ def list_data_points(request, origin = None, destination = None, type = None):
     }
     return render (request, template_name, context)
 
+
 @csrf_exempt
 def process_sns_message (request):
-    print(request.headers)
-    print(request.POST)
-    print("Acabou")
+    body = json.loads(request.body)
+    print(body)
 
     # Confirm topic subscription
     if request.headers['x-amz-sns-message-type'] == 'SubscriptionConfirmation':
-        x = requests.get(request.POST['SubscribeURL'])
+        x = requests.get(body['SubscribeURL'])
+
     # Else process the message
     elif request.headers['x-amz-sns-message-type'] == 'Notification':
-        msg = request.POST['Message']
+        
+        # Reading the message
+        msg = body['Message']
         print('The message is: {}'.format(msg))
+
+        # Convert string to dict
+        msg = eval(msg)
+
+        # Receiving post arguments
+        dim_1 = msg['dim_1']
+        dim_2 = msg['dim_2']
+        business_key = msg['business_key']
+        origin = msg['origin']
+        destination = msg['destination']
+
+        # Save
+        data_point = DataPoint()
+        data_point.dim_1 = dim_1
+        data_point.dim_2 = dim_2
+        data_point.business_key = business_key
+        data_point.origin = origin
+        data_point.destination = destination
+        data_point.save()
+
+        # Insert the new data poiont
+        msg = update_system_after_new_data_point (origin, destination, dim_1, dim_2)
+
     else:
         print('The system cannot recognize x-amz-sns-message-type: {}'.format(request.headers['x-amz-sns-message-type']))
 

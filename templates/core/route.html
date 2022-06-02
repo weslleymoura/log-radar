@@ -40,7 +40,7 @@
                           <h5 class="card-title">Origin</h5>
                           <p class="card-text">Type the origin of the route
                           </p>
-                          <input type="text" id="origin" name="origin" class="form-control" value="{{ origin }}">
+                          <input type="text" id="origin" name="origin" class="form-control" value="{{ origin }}" placeholder="DEFAULT ORIGIN">
                         </div>
                       </div>
                       <div class="card">
@@ -48,7 +48,7 @@
                           <h5 class="card-title">Destination</h5>
                           <p class="card-text">Type the destination of the route
                           </p>
-                          <input type="text" id="destination" name="destination" class="form-control" value="{{ destination }}">
+                          <input type="text" id="destination" name="destination" class="form-control" value="{{ destination }}" placeholder="DEFAULT DESTINATION">
             
                         </div>
                       </div>        
@@ -72,31 +72,107 @@
         
           <br>
           <div class="container" id="chartDiv">
-            <center>
-                <a class="btn btn-info" href="{% url 'core:list_data_points' origin destination 'regular' %}">
-                  Regular services <span class="badge badge-light">{{ n_regular }}</span>
-                </a>
             
-                <a class="btn btn-danger" href="{% url 'core:list_data_points' origin destination 'flagged' %}">
-                  Delayed services <span class="badge badge-light">{{ n_risk }}</span>
-                </a>
+                <div class="jumbotron">
+                  <h1 class="display-4">Control Panel</h1>
+                  <p class="lead">This is a control panel where you can see the overall situation of the current parcel deliveries.</p>
+                  <hr class="my-4">
 
-                <img src="data:image/png;base64, {{ chart|safe }}">
+                  <p class="lead">
+
+                    <a class="btn btn-info btn-sm" href="{% url 'core:list_data_points' origin destination 'regular' %}">
+                      Regular services <span class="badge badge-light">{{ n_regular }}</span>
+                    </a>
+
+                    <a class="btn btn-danger btn-sm" href="{% url 'core:list_data_points' origin destination 'flagged' %}">
+                      Irregular services <span class="badge badge-light">{{ n_risk }}</span>
+                    </a>
+
+                  </p>
+                </div>
+
+               
+                <div class="container">
+                  <h3 class="display-6">Viz Kernel Density Estimation with Contours</h3>
+                  <p>Assuming "x" and "y" are the two principal components of a <i>multidimensional data distribution</i>** and "z" is the density estimation of the distribution, 
+                    we can visualize this data in a contour plot, where <b>The densest contours are the ones that represents the base behavior of the data (aka company operation pattern).</b>
+                  </p>
+
+                  <p>
+                    We are calling this knowledge discovering step as <b>business operation pegging</b>.
+                  </p>
+
+                </div>
+               
+
+                <center>
+                  <img src="data:image/png;base64, {{ chart|safe }}">
+                </center>
+
+                <p style="font-size:13px;">
+                  ** <i>multidimensional data distribution</i>: a set of dimensions that represents the business process in a given context.
+                </p>
+
+                <p>
+                  After pegging the business operation, we are assuming that:
+                  <ul>
+                    <li>Any new data point that falls into the densest contours, are flagged as <b>regular services</b></li>
+                    <li>Any new data point that falls outside the densest contours, are flagged as <b>irregular services</b></li>
+                  </ul>
+                </p>
 
                 <br>
 
-                <img src="data:image/png;base64, {{ chart_cluster|safe }}">
+                <h3 class="display-6">Online tracking of the business drift</h3>
+                  <p>Contours need to be updated whenever the system understands that the data distribution has changed (the company is operating in a differnet way). 
+                    On that situation, we say that the system <b>has lose the business peg</b> and needs to be (re)synchronized. Business drift is monitored by an online 
+                    density-based clustering model, known as <i>DenStream</i>**.
+                    
+                  </p>
 
-            </center>
+                  <p>Basically, we are monitoring the creation of micro clustering performed by DenStream. Whenever the system observe the creation of new micro clusters (online phase),
+                    it will recreate the contours (offline phase).
+                    
+                  </p>
+
+                <br>
+
+                
+
+                <center>
+                  <img src="data:image/png;base64, {{ chart_cluster|safe }}">
+                </center>
+
+                <p style="font-size:13px;">
+                  ** <i>
+                  The DenStream method has two phases, an online phase and an offine phase. Their pseudocode is shown in figure 9.2. In the online phase, 
+                  every time a new point arrives, DEN-STREAM first tries to merge it into one of the potential microclusters. If this is not possible, 
+                  it then tries to merge the point with an outlier microcluster. If the weight of the outlier microcluster has increased enough to be a potential 
+                  microcluster, the microcluster is promoted. Otherwise, DEN-STREAM starts a new outlier microcluster. The offine phase consists of 
+                  removing the microclusters that have not reached a sufficient weight, and performing a batch DBSCAN clustering.
+                  </i>
+                </p>
+
           </div>
 
           <br>
-          <div class="container">
-            <center>
+
+          <div class="jumbotron">
+            <h3 class="display-6">More actions</h3>
+            <p class="lead">Keep playing with the system, by adding new data points or checking the training set.</p>
+            <hr class="my-4">
+
+            <p class="lead">
+
                 <a href="{% url 'core:add_data_point' origin destination %}" class="btn btn-primary btn-sm">Create data point</a>
-                <a href="{% url 'core:list_data_points' origin destination 'train' %}" class="btn btn-primary btn-sm">Check training set</a>
-            </center>
+                <a href="{% url 'core:list_data_points' origin destination 'train' %}" class="btn btn-info btn-sm">Check training set</a>
+
+            </p>
           </div>
+
+          <br>
+
+          
 
           <!--<div id="divID"></div>-->
 
